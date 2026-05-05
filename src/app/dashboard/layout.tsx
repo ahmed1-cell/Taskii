@@ -1,5 +1,8 @@
+
 import { Navbar } from "@/components/layout/Navbar";
 import { Sidebar } from "@/components/layout/Sidebar";
+import { NotificationManager } from "@/components/providers/NotificationManager";
+import { Toaster } from "@/components/ui/toaster";
 
 export default function DashboardLayout({
   children,
@@ -8,6 +11,8 @@ export default function DashboardLayout({
 }) {
   return (
     <div className="min-h-screen flex flex-col">
+      <NotificationManager />
+      <Toaster />
       <Navbar />
       <div className="flex flex-1 overflow-hidden">
         <Sidebar />

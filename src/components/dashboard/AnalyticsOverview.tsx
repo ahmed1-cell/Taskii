@@ -35,7 +35,12 @@ export function AnalyticsOverview() {
     setMounted(true);
   }, []);
 
-  if (!mounted) return <div className="h-[400px] w-full bg-muted animate-pulse rounded-xl" />;
+  if (!mounted) return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="col-span-full lg:col-span-2 h-[350px] bg-muted animate-pulse rounded-xl" />
+      <div className="h-[350px] bg-muted animate-pulse rounded-xl" />
+    </div>
+  );
   
   const completedCount = tasks.filter(t => t.status === 'done').length;
   const inProgressCount = tasks.filter(t => t.status === 'in-progress').length;

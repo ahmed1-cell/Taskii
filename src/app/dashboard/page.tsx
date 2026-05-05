@@ -5,10 +5,11 @@ import { AnalyticsOverview } from "@/components/dashboard/AnalyticsOverview";
 import { TaskCard } from "@/components/tasks/TaskCard";
 import { useTaskiiStore } from "@/app/lib/store";
 import { Button } from "@/components/ui/button";
-import { Plus, Filter, ArrowRight, Sparkles, Timer } from "lucide-react";
+import { Plus, Filter, ArrowRight, Sparkles, Timer, Zap, Target } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { CreateTaskModal } from "@/components/tasks/CreateTaskModal";
+import { Badge } from "@/components/ui/badge";
 
 export default function DashboardPage() {
   const { tasks, currentUser, searchQuery } = useTaskiiStore();
@@ -26,17 +27,26 @@ export default function DashboardPage() {
     t.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const recentTasks = filteredTasks.slice(0, 4);
+  const pendingTasks = filteredTasks.filter(t => t.status !== 'done');
+  const recentTasks = pendingTasks.slice(0, 4);
+  const highPriorityCount = pendingTasks.filter(t => t.priority === 'high').length;
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">
-            Welcome back, {currentUser?.name?.split(' ')[0]} 👋
-          </h1>
-          <p className="text-muted-foreground mt-1">
-            Here&apos;s what&apos;s happening in your workspace today.
+          <div className="flex items-center gap-3 mb-1">
+            <h1 className="text-3xl font-bold tracking-tight text-foreground">
+              Welcome back, {currentUser?.name?.split(' ')[0]} 👋
+            </h1>
+            {highPriorityCount > 0 && (
+              <Badge variant="destructive" className="rounded-full animate-bounce">
+                {highPriorityCount} Critical
+              </Badge>
+            )}
+          </div>
+          <p className="text-muted-foreground">
+            You have {pendingTasks.length} pending tasks to crush today.
           </p>
         </div>
         <Button onClick={() => setIsModalOpen(true)} className="rounded-full shadow-lg gap-2 h-12 px-6">
@@ -49,7 +59,9 @@ export default function DashboardPage() {
       <section>
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
-            <h2 className="text-xl font-semibold">Priority Focus</h2>
+            <h2 className="text-xl font-semibold flex items-center gap-2">
+              <Target className="h-5 w-5 text-primary" /> Priority Focus
+            </h2>
             <div className="flex gap-2">
               <Button variant="outline" size="sm" className="h-8 text-xs gap-1 rounded-full px-4">
                 <Filter className="h-3 w-3" /> Status
@@ -70,7 +82,7 @@ export default function DashboardPage() {
             ))
           ) : (
             <div className="col-span-full py-12 text-center bg-muted/20 border border-dashed rounded-xl">
-              <p className="text-muted-foreground">No tasks found matching your criteria.</p>
+              <p className="text-muted-foreground">No pending tasks found. Time to relax? 🌴</p>
             </div>
           )}
           
@@ -109,20 +121,23 @@ export default function DashboardPage() {
           </div>
         </div>
         
-        <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-2xl border border-primary/20 p-8 relative overflow-hidden group">
+        <div className="bg-gradient-to-br from-primary/20 to-primary/5 rounded-2xl border border-primary/20 p-8 relative overflow-hidden group">
           <div className="absolute -right-8 -bottom-8 opacity-10 group-hover:scale-110 transition-transform duration-700">
-            <Timer className="h-48 w-48 text-primary" />
+            <Zap className="h-48 w-48 text-primary" />
           </div>
           <div className="relative z-10">
+            <div className="bg-primary/20 w-fit px-3 py-1 rounded-full text-[10px] font-bold text-primary uppercase mb-4">
+              Unique Feature
+            </div>
             <h3 className="text-2xl font-bold mb-3 text-primary flex items-center gap-2">
-              ⏱️ Deep Work
+              ⚡ AI Battle Plan
             </h3>
             <p className="text-muted-foreground mb-6 max-w-sm">
-              Activate the Pomodoro timer to eliminate distractions and log focus sessions directly to your priority tasks.
+              Let AI analyze your current workload and generate a prioritized "Daily Sprint" strategy to maximize your impact.
             </p>
-            <Link href="/dashboard/tools/pomodoro">
+            <Link href="/dashboard/tools/ai">
               <Button variant="default" className="bg-primary hover:bg-primary/90 rounded-full px-8 shadow-md">
-                Start Session
+                Generate Plan
               </Button>
             </Link>
           </div>

@@ -11,11 +11,12 @@ import { format } from "date-fns";
 import { useTaskiiStore } from "@/app/lib/store";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface TaskCardProps {
   task: Task;
@@ -32,11 +33,6 @@ export function TaskCard({ task }: TaskCardProps) {
   };
 
   const completedSubtasks = task.subTasks.filter(st => st.completed).length;
-
-  const handleToggleStatus = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    updateTask(task.id, { status: task.status === 'done' ? 'todo' : 'done' });
-  };
 
   return (
     <>
@@ -128,7 +124,7 @@ export function TaskCard({ task }: TaskCardProps) {
 }
 
 function TaskDetailModal({ task, open, onOpenChange }: { task: Task; open: boolean; onOpenChange: (open: boolean) => void }) {
-  const { updateTask, deleteTask } = useTaskiiStore();
+  const { updateTask } = useTaskiiStore();
   const [editedTask, setEditedTask] = useState(task);
 
   const saveChanges = () => {
@@ -146,77 +142,102 @@ function TaskDetailModal({ task, open, onOpenChange }: { task: Task; open: boole
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
-        <DialogHeader>
+      <DialogContent className="sm:max-w-[550px] max-h-[90vh] flex flex-col p-0 overflow-hidden">
+        <DialogHeader className="p-6 pb-0">
           <DialogTitle>Edit Task</DialogTitle>
         </DialogHeader>
-        <div className="space-y-4 py-4">
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Task Title</label>
-            <Input 
-              value={editedTask.title} 
-              onChange={(e) => setEditedTask({ ...editedTask, title: e.target.value })} 
-            />
-          </div>
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Description</label>
-            <Textarea 
-              value={editedTask.description}
-              onChange={(e) => setEditedTask({ ...editedTask, description: e.target.value })}
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
+        
+        <ScrollArea className="flex-1 p-6 pt-4">
+          <div className="space-y-6">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Priority</label>
-              <Select value={editedTask.priority} onValueChange={(v: any) => setEditedTask({ ...editedTask, priority: v })}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="low">Low</SelectItem>
-                  <SelectItem value="medium">Medium</SelectItem>
-                  <SelectItem value="high">High</SelectItem>
-                </SelectContent>
-              </Select>
+              <label className="text-sm font-medium">Task Title</label>
+              <Input 
+                value={editedTask.title} 
+                onChange={(e) => setEditedTask({ ...editedTask, title: e.target.value })} 
+                className="text-lg font-semibold"
+              />
             </div>
+            
             <div className="space-y-2">
-              <label className="text-sm font-medium">Status</label>
-              <Select value={editedTask.status} onValueChange={(v: any) => setEditedTask({ ...editedTask, status: v })}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="todo">To Do</SelectItem>
-                  <SelectItem value="in-progress">In Progress</SelectItem>
-                  <SelectItem value="done">Done</SelectItem>
-                </SelectContent>
-              </Select>
+              <label className="text-sm font-medium">Description</label>
+              <Textarea 
+                value={editedTask.description}
+                onChange={(e) => setEditedTask({ ...editedTask, description: e.target.value })}
+                className="min-h-[100px] resize-none"
+              />
             </div>
-          </div>
 
-          {editedTask.subTasks.length > 0 && (
-            <div className="space-y-3">
-              <label className="text-sm font-medium">Subtasks</label>
-              <div className="space-y-2 border rounded-lg p-3 bg-muted/30">
-                {editedTask.subTasks.map(st => (
-                  <div key={st.id} className="flex items-center gap-2">
-                    <Checkbox 
-                      checked={st.completed} 
-                      onCheckedChange={() => toggleSubtask(st.id)}
-                    />
-                    <span className={cn("text-sm", st.completed && "line-through text-muted-foreground")}>
-                      {st.title}
-                    </span>
-                  </div>
-                ))}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Priority</label>
+                <Select value={editedTask.priority} onValueChange={(v: any) => setEditedTask({ ...editedTask, priority: v })}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="low">Low</SelectItem>
+                    <SelectItem value="medium">Medium</SelectItem>
+                    <SelectItem value="high">High</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Status</label>
+                <Select value={editedTask.status} onValueChange={(v: any) => setEditedTask({ ...editedTask, status: v })}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="todo">To Do</SelectItem>
+                    <SelectItem value="in-progress">In Progress</SelectItem>
+                    <SelectItem value="done">Done</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
-          )}
 
-          <div className="flex gap-2 justify-end">
-            <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-            <Button onClick={saveChanges}>Save Changes</Button>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Due Date</label>
+              <Input 
+                type="date"
+                value={format(new Date(editedTask.dueDate), 'yyyy-MM-dd')}
+                onChange={(e) => setEditedTask({ ...editedTask, dueDate: new Date(e.target.value).toISOString() })}
+              />
+            </div>
+
+            {editedTask.subTasks.length > 0 && (
+              <div className="space-y-3">
+                <label className="text-sm font-medium flex items-center justify-between">
+                  Subtasks
+                  <Badge variant="secondary" className="text-[10px]">
+                    {editedTask.subTasks.filter(s => s.completed).length}/{editedTask.subTasks.length}
+                  </Badge>
+                </label>
+                <div className="space-y-2 border rounded-xl p-4 bg-muted/20">
+                  {editedTask.subTasks.map(st => (
+                    <div key={st.id} className="flex items-center gap-3 group/st">
+                      <Checkbox 
+                        checked={st.completed} 
+                        onCheckedChange={() => toggleSubtask(st.id)}
+                        className="h-5 w-5"
+                      />
+                      <span className={cn(
+                        "text-sm transition-colors", 
+                        st.completed ? "line-through text-muted-foreground" : "text-foreground"
+                      )}>
+                        {st.title}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
+        </ScrollArea>
+
+        <div className="p-6 border-t bg-muted/30 flex gap-2 justify-end">
+          <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
+          <Button onClick={saveChanges} className="px-8 shadow-sm">Save Changes</Button>
         </div>
       </DialogContent>
     </Dialog>
