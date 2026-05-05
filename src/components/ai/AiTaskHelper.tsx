@@ -1,13 +1,15 @@
+
 "use client";
 
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Sparkles, Loader2, Plus, ArrowRight } from "lucide-react";
+import { Sparkles, Loader2, Plus, ArrowRight, Download } from "lucide-react";
 import { aiPoweredTaskBreakdown, AiPoweredTaskBreakdownOutput } from "@/ai/flows/ai-powered-task-breakdown";
 import { useTaskiiStore } from "@/app/lib/store";
 import { Badge } from "@/components/ui/badge";
+import { jsPDF } from "jspdf";
 
 export function AiTaskHelper() {
   const [goal, setGoal] = useState("");
@@ -26,6 +28,31 @@ export function AiTaskHelper() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const exportResultToPDF = () => {
+    if (!result) return;
+    const doc = new jsPDF();
+    doc.setFontSize(20);
+    doc.text("Project Roadmap", 20, 20);
+    
+    doc.setFontSize(12);
+    doc.text(`Goal: ${goal}`, 20, 35);
+    
+    doc.setFontSize(14);
+    doc.text("Strategy:", 20, 50);
+    doc.setFontSize(10);
+    const splitAction = doc.splitTextToSize(result.actionPlan, 170);
+    doc.text(splitAction, 20, 60);
+
+    doc.setFontSize(14);
+    doc.text("Key Sub-tasks:", 20, 110);
+    doc.setFontSize(10);
+    result.subTasks.forEach((task, index) => {
+      doc.text(`${index + 1}. ${task}`, 20, 120 + (index * 10));
+    });
+
+    doc.save("ai-roadmap.pdf");
   };
 
   const createMainTask = () => {
@@ -95,7 +122,12 @@ export function AiTaskHelper() {
       {result && (
         <Card className="animate-in fade-in slide-in-from-bottom-4 duration-500">
           <CardHeader>
-            <CardTitle className="text-lg">Suggested Strategy</CardTitle>
+            <div className="flex justify-between items-start">
+              <CardTitle className="text-lg">Suggested Strategy</CardTitle>
+              <Button onClick={exportResultToPDF} variant="outline" size="sm" className="gap-2">
+                <Download className="h-3 w-3" /> PDF
+              </Button>
+            </div>
             <CardDescription className="bg-muted p-4 rounded-lg text-foreground italic border-l-4 border-primary mt-2">
               &quot;{result.actionPlan}&quot;
             </CardDescription>

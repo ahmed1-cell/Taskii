@@ -1,20 +1,22 @@
+
 "use client";
 
 import { Task } from "@/app/lib/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Calendar, Clock, MoreHorizontal, MessageSquare } from "lucide-react";
+import { Calendar, Clock, Trash2, MessageSquare, MoreVertical } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { useTaskiiStore } from "@/app/lib/store";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 interface TaskCardProps {
   task: Task;
 }
 
 export function TaskCard({ task }: TaskCardProps) {
-  const { updateTask } = useTaskiiStore();
+  const { updateTask, deleteTask } = useTaskiiStore();
 
   const priorityColors = {
     low: "bg-blue-100 text-blue-700 border-blue-200",
@@ -31,9 +33,18 @@ export function TaskCard({ task }: TaskCardProps) {
           <Badge className={cn("text-[10px] uppercase font-bold", priorityColors[task.priority])} variant="outline">
             {task.priority}
           </Badge>
-          <button className="text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">
-            <MoreHorizontal className="h-4 w-4" />
-          </button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-muted rounded-md">
+                <MoreVertical className="h-4 w-4" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => deleteTask(task.id)} className="text-destructive gap-2">
+                <Trash2 className="h-4 w-4" /> Delete Task
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         <div className="flex items-start gap-3">
@@ -85,7 +96,7 @@ export function TaskCard({ task }: TaskCardProps) {
           </div>
           <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
             <MessageSquare className="h-3 w-3" />
-            2
+            0
           </div>
         </div>
       </CardContent>

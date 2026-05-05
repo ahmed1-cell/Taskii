@@ -1,12 +1,16 @@
+
 "use client";
 
+import { useState } from "react";
 import { useTaskiiStore } from "@/app/lib/store";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Bell, Search, Plus, Menu } from "lucide-react";
+import { CreateTaskModal } from "@/components/tasks/CreateTaskModal";
 
 export function Navbar() {
   const { currentUser } = useTaskiiStore();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <nav className="h-16 border-b bg-white flex items-center justify-between px-6 sticky top-0 z-50">
@@ -33,7 +37,7 @@ export function Navbar() {
       </div>
 
       <div className="flex items-center gap-4">
-        <Button variant="default" className="hidden sm:flex rounded-full gap-2">
+        <Button onClick={() => setIsModalOpen(true)} variant="default" className="hidden sm:flex rounded-full gap-2">
           <Plus className="h-4 w-4" /> New Task
         </Button>
         <Button variant="ghost" size="icon" className="relative">
@@ -42,15 +46,17 @@ export function Navbar() {
         </Button>
         <div className="flex items-center gap-3 pl-2 border-l">
           <div className="text-right hidden sm:block">
-            <p className="text-sm font-medium leading-none">{currentUser?.name}</p>
-            <p className="text-xs text-muted-foreground">{currentUser?.email}</p>
+            <p className="text-sm font-medium leading-none">{currentUser?.name || "Guest"}</p>
+            <p className="text-xs text-muted-foreground">{currentUser?.email || "guest@taskii.app"}</p>
           </div>
           <Avatar className="h-9 w-9 border shadow-sm">
             <AvatarImage src="https://picsum.photos/seed/taskii-user/100/100" />
-            <AvatarFallback>{currentUser?.name?.charAt(0)}</AvatarFallback>
+            <AvatarFallback>{currentUser?.name?.charAt(0) || "G"}</AvatarFallback>
           </Avatar>
         </div>
       </div>
+
+      <CreateTaskModal open={isModalOpen} onOpenChange={setIsModalOpen} />
     </nav>
   );
 }
