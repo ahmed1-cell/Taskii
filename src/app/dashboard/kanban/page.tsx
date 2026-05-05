@@ -7,7 +7,7 @@ import { Status } from "@/app/lib/types";
 import { Badge } from "@/components/ui/badge";
 import { Plus, MoreHorizontal, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CreateTaskModal } from "@/components/tasks/CreateTaskModal";
 import Link from "next/link";
 
@@ -20,6 +20,13 @@ const columns: { title: string; status: Status }[] = [
 export default function KanbanPage() {
   const { tasks, searchQuery } = useTaskiiStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return <div className="p-8">Loading Board...</div>;
 
   const filteredTasks = tasks.filter(t => 
     t.title.toLowerCase().includes(searchQuery.toLowerCase()) ||

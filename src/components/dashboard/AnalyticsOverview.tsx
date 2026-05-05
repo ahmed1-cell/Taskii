@@ -1,7 +1,9 @@
+
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTaskiiStore } from "@/app/lib/store";
+import { useEffect, useState } from "react";
 import { 
   LineChart, 
   Line, 
@@ -27,6 +29,13 @@ const data = [
 
 export function AnalyticsOverview() {
   const { tasks } = useTaskiiStore();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return <div className="h-[400px] w-full bg-muted animate-pulse rounded-xl" />;
   
   const completedCount = tasks.filter(t => t.status === 'done').length;
   const inProgressCount = tasks.filter(t => t.status === 'in-progress').length;
@@ -95,12 +104,12 @@ export function AnalyticsOverview() {
           <div className="mt-4 flex flex-col gap-2">
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Completion Rate</span>
-              <span className="font-semibold">{Math.round((completedCount / tasks.length) * 100) || 0}%</span>
+              <span className="font-semibold">{Math.round((completedCount / (tasks.length || 1)) * 100) || 0}%</span>
             </div>
             <div className="w-full bg-secondary h-2 rounded-full overflow-hidden">
               <div 
-                className="bg-primary h-full" 
-                style={{ width: `${(completedCount / tasks.length) * 100 || 0}%` }} 
+                className="bg-primary h-full transition-all duration-500" 
+                style={{ width: `${(completedCount / (tasks.length || 1)) * 100 || 0}%` }} 
               />
             </div>
           </div>

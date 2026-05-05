@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTaskiiStore } from "@/app/lib/store";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,11 @@ import Link from "next/link";
 export function Navbar() {
   const { currentUser, searchQuery, setSearchQuery, clearAllData } = useTaskiiStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <nav className="h-16 border-b bg-white flex items-center justify-between px-6 sticky top-0 z-50">
@@ -34,7 +39,7 @@ export function Navbar() {
         </Link>
       </div>
 
-      <div className="flex-1 max-w-xl px-8 hidden md:block">
+      <div className="flex-1 max-w-md px-4 hidden md:block">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <input
@@ -57,10 +62,12 @@ export function Navbar() {
         </Button>
         
         <div className="flex items-center gap-3 pl-2 border-l">
-          <div className="text-right hidden sm:block">
-            <p className="text-sm font-medium leading-none">{currentUser?.name || "Guest"}</p>
-            <p className="text-xs text-muted-foreground">{currentUser?.email || "guest@taskii.app"}</p>
-          </div>
+          {mounted && (
+            <div className="text-right hidden sm:block">
+              <p className="text-sm font-medium leading-none">{currentUser?.name || "Guest"}</p>
+              <p className="text-xs text-muted-foreground">{currentUser?.email || "guest@taskii.app"}</p>
+            </div>
+          )}
           
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

@@ -7,12 +7,19 @@ import { useTaskiiStore } from "@/app/lib/store";
 import { Button } from "@/components/ui/button";
 import { Plus, Filter, ArrowRight, Sparkles, Timer } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CreateTaskModal } from "@/components/tasks/CreateTaskModal";
 
 export default function DashboardPage() {
   const { tasks, currentUser, searchQuery } = useTaskiiStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return <div className="p-8"><div className="animate-pulse space-y-8"><div className="h-20 bg-muted rounded-xl w-1/3" /><div className="h-64 bg-muted rounded-xl" /></div></div>;
 
   const filteredTasks = tasks.filter(t => 
     t.title.toLowerCase().includes(searchQuery.toLowerCase()) ||

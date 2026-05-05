@@ -31,7 +31,7 @@ export const useTaskiiStore = create<TaskiiState>()(
           description: 'Focus on minimalist aesthetic and high usability.',
           status: 'in-progress',
           priority: 'high',
-          dueDate: new Date().toISOString(),
+          dueDate: '2024-05-15T00:00:00.000Z',
           recurrence: 'none',
           workspaceId: 'w1',
           subTasks: [
@@ -46,7 +46,7 @@ export const useTaskiiStore = create<TaskiiState>()(
           description: 'Review task progress and plan next week.',
           status: 'todo',
           priority: 'medium',
-          dueDate: new Date().toISOString(),
+          dueDate: '2024-05-20T00:00:00.000Z',
           recurrence: 'weekly',
           workspaceId: 'w1',
           subTasks: []
