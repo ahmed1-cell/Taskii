@@ -7,6 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { Play, Pause, RotateCcw, Coffee, Zap, ChevronDown } from "lucide-react";
 import { useTaskiiStore } from "@/app/lib/store";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 
 export function PomodoroTimer() {
   const { tasks, updateTask } = useTaskiiStore();
@@ -45,7 +46,6 @@ export function PomodoroTimer() {
         });
       }
     }
-    // Simple alert or notification logic here
     alert("Session complete!");
   };
 
