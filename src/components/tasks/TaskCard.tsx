@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { useTaskiiStore } from "@/app/lib/store";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -127,6 +127,13 @@ function TaskDetailModal({ task, open, onOpenChange }: { task: Task; open: boole
   const { updateTask } = useTaskiiStore();
   const [editedTask, setEditedTask] = useState(task);
 
+  // Sync state when task changes or modal opens
+  useEffect(() => {
+    if (open) {
+      setEditedTask(task);
+    }
+  }, [task, open]);
+
   const saveChanges = () => {
     updateTask(task.id, editedTask);
     onOpenChange(false);
@@ -137,7 +144,11 @@ function TaskDetailModal({ task, open, onOpenChange }: { task: Task; open: boole
       st.id === id ? { ...st, completed: !st.completed } : st
     );
     setEditedTask({ ...editedTask, subTasks: newSubTasks });
-    updateTask(task.id, { subTasks: newSubTasks });
+  };
+
+  const deleteSubtask = (id: string) => {
+    const newSubTasks = editedTask.subTasks.filter(st => st.id !== id);
+    setEditedTask({ ...editedTask, subTasks: newSubTasks });
   };
 
   return (
@@ -205,16 +216,18 @@ function TaskDetailModal({ task, open, onOpenChange }: { task: Task; open: boole
               />
             </div>
 
-            {editedTask.subTasks.length > 0 && (
-              <div className="space-y-3">
-                <label className="text-sm font-medium flex items-center justify-between">
-                  Subtasks
-                  <Badge variant="secondary" className="text-[10px]">
-                    {editedTask.subTasks.filter(s => s.completed).length}/{editedTask.subTasks.length}
-                  </Badge>
-                </label>
-                <div className="space-y-2 border rounded-xl p-4 bg-muted/20">
-                  {editedTask.subTasks.map(st => (
+            <div className="space-y-3">
+              <label className="text-sm font-medium flex items-center justify-between">
+                Subtasks
+                <Badge variant="secondary" className="text-[10px]">
+                  {editedTask.subTasks.filter(s => s.completed).length}/{editedTask.subTasks.length}
+                </Badge>
+              </label>
+              <div className="space-y-2 border rounded-xl p-4 bg-muted/20 min-h-[50px]">
+                {editedTask.subTasks.length === 0 ? (
+                  <p className="text-xs text-muted-foreground text-center py-2">No subtasks found.</p>
+                ) : (
+                  editedTask.subTasks.map(st => (
                     <div key={st.id} className="flex items-center gap-3 group/st">
                       <Checkbox 
                         checked={st.completed} 
@@ -222,16 +235,24 @@ function TaskDetailModal({ task, open, onOpenChange }: { task: Task; open: boole
                         className="h-5 w-5"
                       />
                       <span className={cn(
-                        "text-sm transition-colors", 
+                        "text-sm flex-1 transition-colors", 
                         st.completed ? "line-through text-muted-foreground" : "text-foreground"
                       )}>
                         {st.title}
                       </span>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-6 w-6 opacity-0 group-hover/st:opacity-100 text-destructive"
+                        onClick={() => deleteSubtask(st.id)}
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </Button>
                     </div>
-                  ))}
-                </div>
+                  ))
+                )}
               </div>
-            )}
+            </div>
           </div>
         </ScrollArea>
 

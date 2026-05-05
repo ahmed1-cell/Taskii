@@ -9,18 +9,27 @@ import { Plus, Filter, ArrowRight, Sparkles, Timer, Zap, Target } from "lucide-r
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { CreateTaskModal } from "@/components/tasks/CreateTaskModal";
+import { AiBattlePlanModal } from "@/components/ai/AiBattlePlanModal";
 import { Badge } from "@/components/ui/badge";
 
 export default function DashboardPage() {
   const { tasks, currentUser, searchQuery } = useTaskiiStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isBattlePlanOpen, setIsBattlePlanOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  if (!mounted) return <div className="p-8"><div className="animate-pulse space-y-8"><div className="h-20 bg-muted rounded-xl w-1/3" /><div className="h-64 bg-muted rounded-xl" /></div></div>;
+  if (!mounted) return (
+    <div className="p-8">
+      <div className="animate-pulse space-y-8">
+        <div className="h-20 bg-muted rounded-xl w-1/3" />
+        <div className="h-64 bg-muted rounded-xl" />
+      </div>
+    </div>
+  );
 
   const filteredTasks = tasks.filter(t => 
     t.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -135,16 +144,18 @@ export default function DashboardPage() {
             <p className="text-muted-foreground mb-6 max-w-sm">
               Let AI analyze your current workload and generate a prioritized "Daily Sprint" strategy to maximize your impact.
             </p>
-            <Link href="/dashboard/tools/ai">
-              <Button variant="default" className="bg-primary hover:bg-primary/90 rounded-full px-8 shadow-md">
-                Generate Plan
-              </Button>
-            </Link>
+            <Button 
+              onClick={() => setIsBattlePlanOpen(true)}
+              className="bg-primary hover:bg-primary/90 rounded-full px-8 shadow-md"
+            >
+              Generate Plan
+            </Button>
           </div>
         </div>
       </div>
 
       <CreateTaskModal open={isModalOpen} onOpenChange={setIsModalOpen} />
+      <AiBattlePlanModal open={isBattlePlanOpen} onOpenChange={setIsBattlePlanOpen} />
     </div>
   );
 }
