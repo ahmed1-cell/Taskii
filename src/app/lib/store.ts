@@ -1,4 +1,3 @@
-
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Task, Workspace, User } from './types';
@@ -10,6 +9,8 @@ interface TaskiiState {
   activeWorkspaceId: string | null;
   searchQuery: string;
   members: User[];
+  isDeepWorkMode: boolean;
+  setDeepWorkMode: (active: boolean) => void;
   setSearchQuery: (query: string) => void;
   addTask: (task: Task) => void;
   updateTask: (id: string, updates: Partial<Task>) => void;
@@ -27,42 +28,44 @@ export const useTaskiiStore = create<TaskiiState>()(
       tasks: [
         {
           id: '1',
-          title: 'Design Taskii Homepage',
-          description: 'Focus on minimalist aesthetic and high usability.',
+          title: 'Design Taskii v2.0 Branding',
+          description: 'Apply #6C5CE7 Taskii Violet and refine the architectural blueprint.',
           status: 'in-progress',
           priority: 'high',
-          dueDate: '2024-05-15T00:00:00.000Z',
+          dueDate: new Date().toISOString(),
           recurrence: 'none',
           workspaceId: 'w1',
           subTasks: [
-            { id: 'st1', title: 'Define color palette', completed: true },
-            { id: 'st2', title: 'Create wireframes', completed: false }
+            { id: 'st1', title: 'Update globals.css colors', completed: true },
+            { id: 'st2', title: 'Implement Deep Work Mode', completed: false }
           ],
           pomodoroSessions: 2
         },
         {
           id: '2',
-          title: 'Weekly Review',
-          description: 'Review task progress and plan next week.',
+          title: 'Architectural Review',
+          description: 'Review task engine performance and Redis caching strategy.',
           status: 'todo',
           priority: 'medium',
-          dueDate: '2024-05-20T00:00:00.000Z',
+          dueDate: new Date(Date.now() + 86400000).toISOString(),
           recurrence: 'weekly',
           workspaceId: 'w1',
           subTasks: []
         }
       ],
       workspaces: [
-        { id: 'w1', name: 'Personal', ownerId: 'u1', members: ['u1'], isPersonal: true },
-        { id: 'w2', name: 'Team Alpha', ownerId: 'u1', members: ['u1', 'u2'], isPersonal: false }
+        { id: 'w1', name: 'Main HQ', ownerId: 'u1', members: ['u1'], isPersonal: true },
+        { id: 'w2', name: 'Dev Team', ownerId: 'u1', members: ['u1', 'u2'], isPersonal: false }
       ],
-      currentUser: { id: 'u1', name: 'Guest User', email: 'guest@taskii.app' },
+      currentUser: { id: 'u1', name: 'Muhammad Ahmed', email: 'ahmed@taskii.app' },
       members: [
-        { id: 'u1', name: 'Guest User', email: 'guest@taskii.app' },
+        { id: 'u1', name: 'Muhammad Ahmed', email: 'ahmed@taskii.app' },
         { id: 'u2', name: 'Sarah Miller', email: 'sarah@example.com' }
       ],
       activeWorkspaceId: 'w1',
       searchQuery: '',
+      isDeepWorkMode: false,
+      setDeepWorkMode: (isDeepWorkMode) => set({ isDeepWorkMode }),
       setSearchQuery: (searchQuery) => set({ searchQuery }),
       addTask: (task) => set((state) => ({ tasks: [task, ...state.tasks] })),
       updateTask: (id, updates) => set((state) => ({

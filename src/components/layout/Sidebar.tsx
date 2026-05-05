@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useTaskiiStore } from "@/app/lib/store";
@@ -12,17 +11,21 @@ import {
   Timer, 
   Users, 
   Settings,
-  Sparkles
+  Sparkles,
+  Zap,
+  Clock3
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Switch } from "@/components/ui/switch";
 
 const navItems = [
   { name: 'Overview', icon: LayoutDashboard, href: '/dashboard' },
   { name: 'List View', icon: CheckSquare, href: '/dashboard/list' },
   { name: 'Kanban', icon: Trello, href: '/dashboard/kanban' },
   { name: 'Calendar', icon: Calendar, href: '/dashboard/calendar' },
+  { name: 'Timeline', icon: Clock3, href: '/dashboard/timeline' },
   { name: 'Analytics', icon: PieChart, href: '/dashboard/analytics' },
 ];
 
@@ -33,7 +36,7 @@ const toolItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
-  const { workspaces, activeWorkspaceId, setActiveWorkspace } = useTaskiiStore();
+  const { workspaces, activeWorkspaceId, setActiveWorkspace, isDeepWorkMode, setDeepWorkMode } = useTaskiiStore();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -116,25 +119,39 @@ export function Sidebar() {
         </div>
       </div>
 
-      <div className="p-4 border-t space-y-1 bg-card">
-        <Link href="/dashboard/members">
-          <span className={cn(
-            "flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors",
-            pathname === '/dashboard/members' ? "bg-primary/10 text-primary font-medium" : "text-muted-foreground hover:bg-muted"
-          )}>
-            <Users className="h-4 w-4 shrink-0" />
-            Team Members
-          </span>
-        </Link>
-        <Link href="/dashboard/settings">
-          <span className={cn(
-            "flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors",
-            pathname === '/dashboard/settings' ? "bg-primary/10 text-primary font-medium" : "text-muted-foreground hover:bg-muted"
-          )}>
-            <Settings className="h-4 w-4 shrink-0" />
-            Settings
-          </span>
-        </Link>
+      <div className="p-4 border-t space-y-4 bg-muted/20">
+        <div className="flex items-center justify-between px-2">
+          <div className="flex items-center gap-2 text-primary">
+            <Zap className="h-4 w-4" />
+            <span className="text-xs font-bold uppercase">Deep Work</span>
+          </div>
+          <Switch 
+            checked={isDeepWorkMode}
+            onCheckedChange={setDeepWorkMode}
+            className="data-[state=checked]:bg-primary"
+          />
+        </div>
+
+        <div className="space-y-1">
+          <Link href="/dashboard/members">
+            <span className={cn(
+              "flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors",
+              pathname === '/dashboard/members' ? "bg-primary/10 text-primary font-medium" : "text-muted-foreground hover:bg-muted"
+            )}>
+              <Users className="h-4 w-4 shrink-0" />
+              Team Members
+            </span>
+          </Link>
+          <Link href="/dashboard/settings">
+            <span className={cn(
+              "flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors",
+              pathname === '/dashboard/settings' ? "bg-primary/10 text-primary font-medium" : "text-muted-foreground hover:bg-muted"
+            )}>
+              <Settings className="h-4 w-4 shrink-0" />
+              Settings
+            </span>
+          </Link>
+        </div>
       </div>
     </aside>
   );
