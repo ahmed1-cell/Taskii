@@ -20,11 +20,13 @@ import {
   MessageSquare,
   Activity,
   Zap,
-  MoreVertical
+  MoreVertical,
+  CheckSquare
 } from "lucide-react";
 import { useTaskiiStore } from "@/app/lib/store";
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 
 interface TaskDetailPanelProps {
   task: Task;
@@ -62,6 +64,11 @@ export function TaskDetailPanel({ task, open, onOpenChange }: TaskDetailPanelPro
     const subs = editedTask.subTasks.map(s => 
       s.id === id ? { ...s, completed: !s.completed } : s
     );
+    handleUpdate({ subTasks: subs });
+  };
+
+  const deleteSubtask = (id: string) => {
+    const subs = editedTask.subTasks.filter(s => s.id !== id);
     handleUpdate({ subTasks: subs });
   };
 
@@ -123,7 +130,12 @@ export function TaskDetailPanel({ task, open, onOpenChange }: TaskDetailPanelPro
                       <span className={cn("text-sm flex-1", sub.completed && "line-through text-muted-foreground")}>
                         {sub.title}
                       </span>
-                      <Button variant="ghost" size="icon" className="h-6 w-6 opacity-0 group-hover:opacity-100 text-destructive">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-6 w-6 opacity-0 group-hover:opacity-100 text-destructive"
+                        onClick={() => deleteSubtask(sub.id)}
+                      >
                         <Trash2 className="h-3.5 w-3.5" />
                       </Button>
                     </div>
@@ -226,24 +238,4 @@ export function TaskDetailPanel({ task, open, onOpenChange }: TaskDetailPanelPro
       </SheetContent>
     </Sheet>
   );
-}
-
-function CheckSquare(props: any) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <polyline points="9 11 12 14 22 4" />
-      <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
-    </svg>
-  )
 }
