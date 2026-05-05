@@ -59,22 +59,27 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground font-body;
+    @apply bg-background text-foreground font-body antialiased;
   }
 }
 
-.deep-work-mode {
-  transition: all 0.5s ease-in-out;
+/* Deep Work Mode Transitions */
+.deep-work-active {
+  background-color: #000 !important;
+  transition: background-color 0.5s ease-in-out;
 }
 
-.deep-work-active * {
+.deep-work-active main {
+  background-color: #000 !important;
+}
+
+.deep-work-dim {
+  opacity: 0.15;
+  pointer-events: none;
   transition: opacity 0.5s ease-in-out;
 }
 
 .deep-work-essential {
   opacity: 1 !important;
-}
-
-.deep-work-dim {
-  opacity: 0.15;
+  pointer-events: auto !important;
 }

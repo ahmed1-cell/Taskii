@@ -1,8 +1,9 @@
 
 {
-  "name": "nextn",
-  "version": "0.1.0",
+  "name": "taskii",
+  "version": "2.0.0",
   "private": true,
+  "author": "Muhammad Ahmed",
   "scripts": {
     "dev": "next dev --turbopack -p 9002",
     "genkit:dev": "genkit start -- tsx src/ai/dev.ts",
