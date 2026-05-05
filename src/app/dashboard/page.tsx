@@ -5,7 +5,7 @@ import { AnalyticsOverview } from "@/components/dashboard/AnalyticsOverview";
 import { TaskCard } from "@/components/tasks/TaskCard";
 import { useTaskiiStore } from "@/app/lib/store";
 import { Button } from "@/components/ui/button";
-import { Plus, Filter, ArrowRight, Sparkles, Timer, Zap, Target } from "lucide-react";
+import { Plus, Filter, ArrowRight, Sparkles, Target, Zap } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { CreateTaskModal } from "@/components/tasks/CreateTaskModal";
